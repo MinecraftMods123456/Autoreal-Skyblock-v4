@@ -1,0 +1,48 @@
+name: Build Auto Reel
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+
+      - name: Show Java version
+        run: java -version
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Build mod
+        run: ./gradlew build --no-daemon --stacktrace
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v7
+        with:
+          name: autoreel-jar
+          path: build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Publish latest release
+        if: success()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest build/libs/*.jar --target "$GITHUB_SHA" --title "Auto Reel (latest build)" --notes "Built automatically for Minecraft 26.1.2."
