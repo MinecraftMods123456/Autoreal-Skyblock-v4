@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"id": "autoreel",
+	"version": "${version}",
+	"name": "Auto Reel",
+	"description": "Client-side auto fishing. Press a key to start/stop: it casts, waits for the bite, reels in and recasts.",
+	"authors": [
+		"You"
+	],
+	"license": "MIT",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"dev.autoreel.AutoReelClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
